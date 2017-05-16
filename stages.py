@@ -29,7 +29,6 @@ def create_board(filename='board1.csv'):
         board = []
         for row in reader:
             board.append(row)
-    board.append('Press P to exit')
     return board    # return nested list [y][x]
 
 
@@ -44,9 +43,17 @@ def print_board(board):
                 print(color_blue + board[i][j] + color_normal, end='')
             elif board[i][j] == 'x':
                 print(color_black + board[i][j] + color_normal, end='')
+            elif board[i][j] == '@':
+                print(color_white + board[i][j] + color_normal, end='')
             elif board[i][j] == '':
                 print(' ', end='')
         print()
+    print('Press P to exit')
+
+
+def insert_player(board, x, y):
+    board[y][x] = ('@')
+    return board
 
 
 def moving(key_input, x, y):
@@ -62,11 +69,6 @@ def moving(key_input, x, y):
         os.system('clear')
         exit()
     return x, y
-
-
-def insert_player(board, x, y):
-    board[y][x] = (color_white + '@' + color_normal)
-    return board
 
 
 def main():
