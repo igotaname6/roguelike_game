@@ -17,7 +17,7 @@ color_white = '\033[3;37;47m'
 color_normal = '\033[1;37;0m'
 color_character = '\033[1;31;47m'
 
-obstacles = ['ź', 'ł', 'ń', 'ż']
+obstacles = ['ź', 'ł', 'ń', 'ż', 'ó']
 
 
 def getch():    # WASD moving
@@ -51,7 +51,7 @@ def print_board(board):
                 print(color_blue + ' ' + color_normal, end='')
             elif board[i][j] == 'ż':
                 print(color_black + ' ' + color_normal, end='')
-            elif board[i][j] == 'drzwi':
+            elif board[i][j] == 'ó':
                 print(color_red + ' ' + color_normal, end='')
             elif board[i][j] == 'Θ':
                 print(color_character + board[i][j] + color_normal, end='')
@@ -86,8 +86,10 @@ def moving(key_input, x, y, board):
     elif key_input == ("p"):
         exit()
     elif key_input == ("e"):
-        pass
-    return x, y
+        brodcast = "change"
+        return x, y, brodcast
+    brodcast = None
+    return x, y, brodcast
 
 def menu_interactions(key_input):
     if key_input == "e":
@@ -98,17 +100,18 @@ def main():
     board_change = "board1.csv"
     player_position = [2, 2]
     while True:
+
+
         print_board(insert_player(create_board(board_change), player_position[0], player_position[1]))
         key_input = getch()
         player_position = moving(key_input, player_position[0], player_position[1], insert_player(create_board(),
                                  player_position[0], player_position[1]))
-        if key_input == 'e':
-            board_change = menu_interactions(key_input)
-            key_input == getch()
-            while key_input != "n":
-                key_input == getch()
-                os.system('clear')
-    os.system('clear')
+        if player_position[2] is None:
+            board_change = "board1.csv"
+        elif player_position[2] is "change":
+            board_change = "menu.csv"
+        os.system('clear')
 if __name__ == '__main__':
 
     main()
+    
