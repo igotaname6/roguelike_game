@@ -88,7 +88,7 @@ def moving(key_input, x, y, board):
     return x, y
 
 
-def intro_screen(filename='intro.csv'):
+def screens(filename='intro.csv'):
     with open(filename, mode='r') as csv_file:
         reader = csv.reader(csv_file, delimiter=',')
         board = []
@@ -107,7 +107,18 @@ def intro_screen(filename='intro.csv'):
 
 def main():
     '''Intro screen. '''
-    intro_screen()
+    screens('intro.csv')
+    while True:
+        key_input = getch()
+        if key_input == 'x':
+            break
+        elif key_input == 'p':
+            exit()
+        else:
+            pass
+
+    '''Character choose screen.'''
+    screens('character_choose.csv')
     while True:
         key_input = getch()
         if key_input == 'x':
