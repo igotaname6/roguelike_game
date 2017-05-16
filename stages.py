@@ -5,10 +5,10 @@ import datetime  # for time counting
 import csv
 import sys, tty, termios    # for getch() function
 
-color_white = '\033[3;37;47m'     # white - b
-color_green = '\033[3;32;42m'   # green - f
-color_blue = '\033[3;34;44m'    # blue - w
-color_black = '\033[3;30;40m'   # black - x
+color_white = '\033[3;37;47m'     # white - buildings
+color_green = '\033[3;32;42m'   # green - forest
+color_blue = '\033[3;34;44m'    # blue - water
+color_black = '\033[3;30;40m'   # black - x-borders
 color_normal = '\033[1;37;0m'     # 'normal'
 
 
@@ -56,28 +56,35 @@ def insert_player(board, x, y):
     return board
 
 
-def moving(key_input, x, y):
+def moving(key_input, x, y, board):
+    borders = ['b', 'f', 'w', 'x']
     if key_input == ("w"):
         y -= 1
+        if board[y][x] in borders:
+            y += 1
     elif key_input == ("a"):
         x -= 1
+        if board[y][x] in borders:
+            x += 1
     elif key_input == ("s"):
         y += 1
+        if board[y][x] in borders:
+            y -= 1
     elif key_input == ("d"):
         x += 1
+        if board[y][x] in borders:
+            x -= 1
     elif key_input == ("p"):
-        os.system('clear')
         exit()
     return x, y
 
 
 def main():
     player_position = [15, 15]
-
     while True:
         print_board(insert_player(create_board(), player_position[0], player_position[1]))
         key_input = getch()
-        player_position = moving(key_input, player_position[0], player_position[1])
+        player_position = moving(key_input, player_position[0], player_position[1], insert_player(create_board(), player_position[0], player_position[1]))
         os.system('clear')
 
 
