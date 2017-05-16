@@ -5,15 +5,19 @@ import datetime  # for time counting
 import csv
 import sys, tty, termios    # for getch() function
 
-color_white = '\033[3;37;47m'     # white _ character
-color_char = '\033[1;31;47m'     # character
-color_green = '\033[3;32;42m'   # green } forest
-color_blue = '\033[3;34;44m'    # blue | water
-color_black = '\033[3;30;40m'   # black ~ obstacles
-color_brown = '\033[3;33;43m'   # brown ` doors, wood
-color_normal = '\033[1;37;0m'     # 'normal'
 
-obstacles = ['_', '}', '|', '~', '`']
+color_black = '\033[3;30;40m'
+color_red = '\033[3;31;41m'
+color_green = '\033[3;32;42m'
+color_yellow = '\033[3;33;43m'
+color_blue = '\033[3;34;44m'
+color_purple = '\033[3;35;45m'
+color_cyan = '\033[3;36;46m'
+color_white = '\033[3;37;47m'
+color_normal = '\033[1;37;0m'
+color_character = '\033[1;31;47m'
+
+obstacles = ['budynek', 'las', 'woda', 'granica', 'drzwi']
 
 
 def getch():    # WASD moving
@@ -39,20 +43,20 @@ def create_board(filename='board1.csv'):
 def print_board(board):
     for i in range(len(board)):
         for j in range(len(board[i])):
-            if board[i][j] == '_':
-                print(color_white + board[i][j] + color_normal, end='')
-            elif board[i][j] == '}':
-                print(color_green + board[i][j] + color_normal, end='')
-            elif board[i][j] == '|':
-                print(color_blue + board[i][j] + color_normal, end='')
-            elif board[i][j] == '~':
-                print(color_black + board[i][j] + color_normal, end='')
+            if board[i][j] == 'budynek':
+                print(color_white + ' ' + color_normal, end='')
+            elif board[i][j] == 'las':
+                print(color_green + ' ' + color_normal, end='')
+            elif board[i][j] == 'woda':
+                print(color_blue + ' ' + color_normal, end='')
+            elif board[i][j] == 'granica':
+                print(color_black + ' ' + color_normal, end='')
+            elif board[i][j] == 'drzwi':
+                print(color_red + ' ' + color_normal, end='')
             elif board[i][j] == 'Θ':
-                print(color_char + board[i][j] + color_normal, end='')
-            elif board[i][j] == '`':
-                print(color_brown + board[i][j] + color_normal, end='')
+                print(color_character + board[i][j] + color_normal, end='')
             elif board[i][j] == '':
-                print(' ', end='')
+                print(color_yellow + ' ' + color_normal, end='')
         print()
     print('Press P to exit')
 
