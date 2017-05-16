@@ -5,11 +5,15 @@ import datetime  # for time counting
 import csv
 import sys, tty, termios    # for getch() function
 
-color_white = '\033[3;37;47m'     # white - buildings
-color_green = '\033[3;32;42m'   # green - forest
-color_blue = '\033[3;34;44m'    # blue - water
-color_black = '\033[3;30;40m'   # black - x-borders
+color_white = '\033[3;37;47m'     # white _ character
+color_char = '\033[1;31;47m'     # character
+color_green = '\033[3;32;42m'   # green } forest
+color_blue = '\033[3;34;44m'    # blue | water
+color_black = '\033[3;30;40m'   # black ~ obstacles
+color_brown = '\033[3;33;43m'   # brown ` doors, wood
 color_normal = '\033[1;37;0m'     # 'normal'
+
+obstacles = ['_', '}', '|', '~', '`']
 
 
 def getch():    # WASD moving
@@ -35,16 +39,18 @@ def create_board(filename='board1.csv'):
 def print_board(board):
     for i in range(len(board)):
         for j in range(len(board[i])):
-            if board[i][j] == 'b':
+            if board[i][j] == '_':
                 print(color_white + board[i][j] + color_normal, end='')
-            elif board[i][j] == 'f':
+            elif board[i][j] == '}':
                 print(color_green + board[i][j] + color_normal, end='')
-            elif board[i][j] == 'w':
+            elif board[i][j] == '|':
                 print(color_blue + board[i][j] + color_normal, end='')
-            elif board[i][j] == 'x':
+            elif board[i][j] == '~':
                 print(color_black + board[i][j] + color_normal, end='')
-            elif board[i][j] == '@':
-                print(color_white + board[i][j] + color_normal, end='')
+            elif board[i][j] == 'Θ':
+                print(color_char + board[i][j] + color_normal, end='')
+            elif board[i][j] == '`':
+                print(color_brown + board[i][j] + color_normal, end='')
             elif board[i][j] == '':
                 print(' ', end='')
         print()
@@ -52,27 +58,26 @@ def print_board(board):
 
 
 def insert_player(board, x, y):
-    board[y][x] = ('@')
+    board[y][x] = ('Θ')
     return board
 
 
 def moving(key_input, x, y, board):
-    borders = ['b', 'f', 'w', 'x']
     if key_input == ("w"):
         y -= 1
-        if board[y][x] in borders:
+        if board[y][x] in obstacles:
             y += 1
     elif key_input == ("a"):
         x -= 1
-        if board[y][x] in borders:
+        if board[y][x] in obstacles:
             x += 1
     elif key_input == ("s"):
         y += 1
-        if board[y][x] in borders:
+        if board[y][x] in obstacles:
             y -= 1
     elif key_input == ("d"):
         x += 1
-        if board[y][x] in borders:
+        if board[y][x] in obstacles:
             x -= 1
     elif key_input == ("p"):
         exit()
@@ -84,7 +89,8 @@ def main():
     while True:
         print_board(insert_player(create_board(), player_position[0], player_position[1]))
         key_input = getch()
-        player_position = moving(key_input, player_position[0], player_position[1], insert_player(create_board(), player_position[0], player_position[1]))
+        player_position = moving(key_input, player_position[0], player_position[1], insert_player(create_board(),
+                                 player_position[0], player_position[1]))
         os.system('clear')
 
 
