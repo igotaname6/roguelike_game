@@ -60,9 +60,8 @@ def moving(key_input, x, y):
         x += 1
     elif key_input == ("p"):
         os.system('clear')
-        broadcast = "a"
         exit()
-    return x, y, broadcast
+    return x, y
 
 
 def insert_player(board, x, y):
