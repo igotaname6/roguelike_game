@@ -51,7 +51,7 @@ def print_board(board):
                 print(color_blue + ' ' + color_normal, end='')
             elif board[i][j] == 'ż':
                 print(color_black + ' ' + color_normal, end='')
-            elif board[i][j] == 'ó':
+            elif board[i][j] == 'drzwi':
                 print(color_red + ' ' + color_normal, end='')
             elif board[i][j] == 'Θ':
                 print(color_character + board[i][j] + color_normal, end='')
@@ -67,23 +67,23 @@ def insert_player(board, x, y):
 
 
 def moving(key_input, x, y, board):
-    if key_input == ("w"):
+    if key_input == 'w':
         y -= 1
         if board[y][x] in obstacles:
             y += 1
-    elif key_input == ("a"):
+    elif key_input == 'a':
         x -= 1
         if board[y][x] in obstacles:
             x += 1
-    elif key_input == ("s"):
+    elif key_input == 's':
         y += 1
         if board[y][x] in obstacles:
             y -= 1
-    elif key_input == ("d"):
+    elif key_input == 'd':
         x += 1
         if board[y][x] in obstacles:
             x -= 1
-    elif key_input == ("p"):
+    elif key_input == 'p':
         exit()
     elif key_input == ("e"):
         brodcast = "change"
@@ -96,12 +96,41 @@ def menu_interactions(key_input):
         stage_change = "menu.csv"
     return stage_change
 
+def intro_screen(filename='intro.csv'):
+    with open(filename, mode='r') as csv_file:
+        reader = csv.reader(csv_file, delimiter=',')
+        board = []
+        for row in reader:
+            board.append(row)
+    for i in range(len(board)):
+        for j in range(len(board[i])):
+            if board[i][j] == 'ż':
+                print(color_black + ' ' + color_normal, end='')
+            elif board[i][j] == '':
+                print(' ', end='')
+            else:
+                print(board[i][j], end='')
+        print()
+
+
 def main():
-    board_change = "board1.csv"
-    player_position = [2, 2]
+
+    '''Intro screen. '''
+    intro_screen()
     while True:
+        key_input = getch()
+        if key_input == 'x':
+            break
+        elif key_input == 'p':
+            exit()
+        else:
+            pass
 
+    '''First stage. '''
 
+    player_position = [2, 2]
+    board_change = "board1.csv"
+    while True:
         print_board(insert_player(create_board(board_change), player_position[0], player_position[1]))
         key_input = getch()
         player_position = moving(key_input, player_position[0], player_position[1], insert_player(create_board(),
@@ -114,4 +143,3 @@ def main():
 if __name__ == '__main__':
 
     main()
-    
