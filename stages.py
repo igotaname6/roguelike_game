@@ -17,7 +17,7 @@ color_white = '\033[3;37;47m'
 color_normal = '\033[1;37;0m'
 color_character = '\033[1;31;47m'
 
-obstacles = ['budynek', 'las', 'woda', 'granica', 'drzwi']
+obstacles = ['ź', 'ł', 'ń', 'ż', 'ó']
 
 
 def getch():    # WASD moving
@@ -43,15 +43,15 @@ def create_board(filename='board2.csv'):
 def print_board(board):
     for i in range(len(board)):
         for j in range(len(board[i])):
-            if board[i][j] == 'budynek':
+            if board[i][j] == 'ź':
                 print(color_white + ' ' + color_normal, end='')
-            elif board[i][j] == 'las':
+            elif board[i][j] == 'ł':
                 print(color_green + ' ' + color_normal, end='')
-            elif board[i][j] == 'woda':
+            elif board[i][j] == 'ń':
                 print(color_blue + ' ' + color_normal, end='')
-            elif board[i][j] == 'granica':
+            elif board[i][j] == 'ż':
                 print(color_black + ' ' + color_normal, end='')
-            elif board[i][j] == 'drzwi':
+            elif board[i][j] == 'ó':
                 print(color_red + ' ' + color_normal, end='')
             elif board[i][j] == 'Θ':
                 print(color_character + board[i][j] + color_normal, end='')
@@ -95,7 +95,7 @@ def menu_interactions(key_input):
     return stage_change
 
 def main():
-    player_position = [15, 15]
+    player_position = [2, 2]
     while True:
         print_board(insert_player(create_board(), player_position[0], player_position[1]))
         key_input = getch()
