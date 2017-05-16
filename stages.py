@@ -114,7 +114,6 @@ def screens(filename='intro.csv'):
 
 
 def main():
-
     '''Intro screen. '''
     screens('intro.csv')
     while True:
@@ -130,9 +129,9 @@ def main():
     screens('character_choose.csv')
     while True:
         key_input = getch()
-        if key_input == 't':
+        if key_input == 't':    # for terrorist
             break
-        elif key_input == 'n':
+        elif key_input == 'n':      # for navy
             break
         elif key_input == 'p':
             exit()
@@ -140,7 +139,6 @@ def main():
             pass
 
     '''First stage. '''
-
     player_position = [2, 2]
     board_change = "board1.csv"
     while True:
@@ -153,6 +151,7 @@ def main():
         elif player_position[2] is "change":
             board_change = "menu.csv"
         os.system('clear')
-if __name__ == '__main__':
 
+
+if __name__ == '__main__':
     main()
