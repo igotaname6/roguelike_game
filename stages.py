@@ -1,4 +1,4 @@
-
+from inventory_creator import import_inventory
 import random
 import os   # for screen clearing
 import datetime  # for time counting
@@ -17,7 +17,7 @@ color_white = '\033[3;37;47m'
 color_normal = '\033[1;37;0m'
 color_character = '\033[1;31;47m'
 
-obstacles = ['ź', 'ł', 'ń', 'ż']
+obstacles = ['ź', 'ł', 'ń', 'ż', 'ó']
 
 
 def getch():    # WASD moving
@@ -85,8 +85,16 @@ def moving(key_input, x, y, board):
             x -= 1
     elif key_input == 'p':
         exit()
-    return x, y
+    elif key_input == ("e"):
+        brodcast = "change"
+        return x, y, brodcast
+    brodcast = None
+    return x, y, brodcast
 
+def menu_interactions(key_input):
+    if key_input == "e":
+        stage_change = "menu.csv"
+    return stage_change
 
 def screens(filename='intro.csv'):
     with open(filename, mode='r') as csv_file:
@@ -106,6 +114,7 @@ def screens(filename='intro.csv'):
 
 
 def main():
+
     '''Intro screen. '''
     screens('intro.csv')
     while True:
@@ -129,14 +138,19 @@ def main():
             pass
 
     '''First stage. '''
+
     player_position = [2, 2]
+    board_change = "board1.csv"
     while True:
-        print_board(insert_player(create_board(), player_position[0], player_position[1]))
+        print_board(insert_player(create_board(board_change), player_position[0], player_position[1]))
         key_input = getch()
         player_position = moving(key_input, player_position[0], player_position[1], insert_player(create_board(),
                                  player_position[0], player_position[1]))
+        if player_position[2] is None:
+            board_change = "board1.csv"
+        elif player_position[2] is "change":
+            board_change = "menu.csv"
         os.system('clear')
-
-
 if __name__ == '__main__':
+
     main()

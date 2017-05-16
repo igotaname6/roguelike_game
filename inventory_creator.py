@@ -1,6 +1,5 @@
 import csv
 
-
 def import_inventory(filename="game_default_inventory.csv"):
     """import inventory from .csv file and merge it by name. Return new inventory"""
     dictionary = {}
@@ -8,8 +7,7 @@ def import_inventory(filename="game_default_inventory.csv"):
         reader = csv.reader(csv_file, delimiter="|")
         for row in reader:
             dictionary[row[0]] = (row[1], row[2])
-            print(dictionary)
-
+    return dictionary
 
 def add_to_dictionary():
     """adding user input - name and two values to  dictionary"""
@@ -28,13 +26,3 @@ def add_to_csv_inventory(inventory, filename="game_default_inventory.csv"):
         writer = csv.writer(csv_file, delimiter="|")
         for item in inventory:  # inventory is dictionary with two values
             writer.writerow((item, inventory[item][0], inventory[item][1]))
-
-
-while True:
-    menu = input("Anything to continue, e to exit, r to read")
-    if menu == "r":
-        import_inventory()
-    elif menu == "w":
-        add_to_csv_inventory(add_to_dictionary())
-    else:
-        break
