@@ -1,8 +1,9 @@
+
 import random
 import os   # for screen clearing
-import sys, tty, termios    # for getch() function
 import datetime  # for time counting
 import csv
+import sys, tty, termios    # for getch() function
 
 color_white = '\033[3;37;47m'     # white - b
 color_green = '\033[3;32;42m'   # green - f
@@ -28,6 +29,11 @@ def create_board(filename='board1.csv'):
         board = []
         for row in reader:
             board.append(row)
+    board.append('Press P to exit')
+    return board    # return nested list [y][x]
+
+
+def print_board(board):
     for i in range(len(board)):
         for j in range(len(board[i])):
             if board[i][j] == 'b':
@@ -43,14 +49,36 @@ def create_board(filename='board1.csv'):
         print()
 
 
+def moving(key_input, x, y):
+    if key_input == ("w"):
+        y -= 1
+    elif key_input == ("a"):
+        x -= 1
+    elif key_input == ("s"):
+        y += 1
+    elif key_input == ("d"):
+        x += 1
+    elif key_input == ("p"):
+        os.system('clear')
+        broadcast = "a"
+        exit()
+    return x, y, broadcast
+
+
 def insert_player(board, x, y):
-    board[y][x] = (color_black + '@' + color_normal)
+    board[y][x] = (color_white + '@' + color_normal)
     return board
 
 
 def main():
-    create_board('board1.csv')
-    insert_player(create_board(), 5, 5)
+    player_position = [15, 15]
+
+    while True:
+        print_board(insert_player(create_board(), player_position[0], player_position[1]))
+        key_input = getch()
+        player_position = moving(key_input, player_position[0], player_position[1])
+        os.system('clear')
+
 
 if __name__ == '__main__':
     main()
