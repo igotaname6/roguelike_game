@@ -1,4 +1,4 @@
-
+from inventory_creator import import_inventory
 import random
 import os   # for screen clearing
 import datetime  # for time counting
@@ -27,7 +27,7 @@ def getch():    # WASD moving
     return ch
 
 
-def create_board(filename='board1.csv'):
+def create_board(filename='board2.csv'):
     with open(filename, mode='r') as csv_file:
         reader = csv.reader(csv_file, delimiter=',')
         board = []
@@ -81,8 +81,14 @@ def moving(key_input, x, y, board):
             x -= 1
     elif key_input == ("p"):
         exit()
+    elif key_input == ("e"):
+        pass
     return x, y
 
+def menu_interactions(key_input):
+    if key_input == "e":
+        stage_change = 2
+    return stage_change
 
 def main():
     player_position = [15, 15]
