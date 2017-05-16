@@ -130,7 +130,9 @@ def main():
     screens('character_choose.csv')
     while True:
         key_input = getch()
-        if key_input == 'x':
+        if key_input == 't':
+            break
+        elif key_input == 'n':
             break
         elif key_input == 'p':
             exit()
