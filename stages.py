@@ -31,7 +31,7 @@ def getch():    # WASD moving
     return ch
 
 
-def create_board(filename='board2.csv'):
+def create_board(filename='board1.csv'):
     with open(filename, mode='r') as csv_file:
         reader = csv.reader(csv_file, delimiter=',')
         board = []
@@ -91,18 +91,24 @@ def moving(key_input, x, y, board):
 
 def menu_interactions(key_input):
     if key_input == "e":
-        stage_change = 2
+        stage_change = "menu.csv"
     return stage_change
 
 def main():
+    board_change = "board1.csv"
     player_position = [2, 2]
     while True:
-        print_board(insert_player(create_board(), player_position[0], player_position[1]))
+        print_board(insert_player(create_board(board_change), player_position[0], player_position[1]))
         key_input = getch()
         player_position = moving(key_input, player_position[0], player_position[1], insert_player(create_board(),
                                  player_position[0], player_position[1]))
-        os.system('clear')
-
-
+        if key_input == 'e':
+            board_change = menu_interactions(key_input)
+            key_input == getch()
+            while key_input != "n":
+                key_input == getch()
+                os.system('clear')
+    os.system('clear')
 if __name__ == '__main__':
+
     main()
