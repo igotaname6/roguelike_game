@@ -17,7 +17,7 @@ color_white = '\033[3;37;47m'
 color_normal = '\033[1;37;0m'
 color_character = '\033[1;31;47m'
 
-obstacles = ['ź', 'ł', 'ń', 'ż', 'ó']
+obstacles = ['ź', 'ł', 'ń', 'ż']
 
 
 def getch():    # WASD moving
@@ -51,7 +51,7 @@ def print_board(board):
                 print(color_blue + ' ' + color_normal, end='')
             elif board[i][j] == 'ż':
                 print(color_black + ' ' + color_normal, end='')
-            elif board[i][j] == 'ó':
+            elif board[i][j] == 'drzwi':
                 print(color_red + ' ' + color_normal, end='')
             elif board[i][j] == 'Θ':
                 print(color_character + board[i][j] + color_normal, end='')
