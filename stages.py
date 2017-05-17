@@ -106,19 +106,23 @@ def main():
     os.system('clear')
     '''Intro screen. '''
     while True:
+        os.system('clear')
         print_board(create_board("intro.csv"))
         key_input = getch()
         if key_input == 'a':    # about screen
+            os.system('clear')
             print_board(create_board("about.csv"))
             key_input = getch()
             if key_input == "b":
                 pass
         elif key_input == 'h':    # how-to-play screen
+            os.system('clear')
             print_board(create_board("howtoplay.csv"))
             key_input = getch()
             if key_input == "b":
                 pass
         elif key_input == 'f':    # highscore screen
+            os.system('clear')
             print_board(create_board("highscore.csv"))
             key_input = getch()
             if key_input == "b":
@@ -129,6 +133,7 @@ def main():
             exit()
 
     '''Create character screen. '''
+    os.system('clear')
     print_board(create_board('character_choose.csv'))
     key_input = None
     while key_input not in ["t", "n", "p"]:
@@ -141,6 +146,7 @@ def main():
             exit()
 
     '''First stage. '''
+    os.system('clear')
     game_factors = [2, 2]  # list with factors depending on game progress
     board_change = "board1.csv"
     while True:
@@ -159,12 +165,14 @@ def main():
             break
         os.system('clear')
 
+    os.system('clear')
     question1 = int(input('2 + 2 = '))
     while question1 != 4:
         question1 = int(input('2 + 2 = '))
     os.system('clear')
 
     '''First stage after first doors. '''
+    os.system('clear')
     game_factors = [3, 5]  # list with factors depending on game progress
     board_change = "board1.csv"
     while True:
@@ -181,7 +189,6 @@ def main():
         elif game_factors[2] is 'drzwi':
             break
         os.system('clear')
-
 
 if __name__ == '__main__':
     main()
