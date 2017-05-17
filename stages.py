@@ -75,40 +75,30 @@ def insert_player(board, x, y):
 def user_command(key_input, x, y, board):
     """reads command from keybords and interact with game"""
     obstacles = ['ź', 'ł', 'ń', 'ż', 'ó']
-    challenges = ['drzwi']
     brodcast = None
     if key_input == 'w':  # move avatr upward
         y -= 1
         if board[y][x] in obstacles:
             y += 1
-        if board[y][x] in challenges:
-            broadcast = 'drzwi'
-            y += 1
     elif key_input == 'a':  # move character left
         x -= 1
         if board[y][x] in obstacles:
-            x += 1
-        if board[y][x] in challenges:
-            broadcast = 'drzwi'
             x += 1
     elif key_input == 's':  # move down
         y += 1
         if board[y][x] in obstacles:
             y -= 1
-        if board[y][x] in challenges:
-            broadcast = 'drzwi'
-            y -= 1
-    elif key_input == 'd':  # move riht
+    elif key_input == 'd':  # move right
         x += 1
         if board[y][x] in obstacles:
             x -= 1
-        if board[y][x] in challenges:
-            broadcast = 'drzwi'
     elif key_input == 'p':  # exit from game
         exit()
     elif key_input == ("e"):  # show inventory
         brodcast = "change"
         return x, y, brodcast
+    if x == 3 and y == 4:
+        brodcast = "drzwi"
     return x, y, brodcast
 
 
@@ -155,20 +145,17 @@ def main():
     while True:
         interactions_on_board = insert_player(create_board(board_change), game_factors[0], game_factors[1])
         print_board(interactions_on_board)
+        print(game_factors)     # testowo
         key_input = getch()
         game_factors = user_command(key_input, game_factors[0], game_factors[1], interactions_on_board)
-        '''
+
         if game_factors[2] is None:
             board_change = "board1.csv"   # do napsania funkcja zmieniająca plansze.
-        if game_factors[2] is "change":
+        elif game_factors[2] is "change":
             board_change = "menu.csv"
-        '''
-        if game_factors[2] is 'drzwi':
+        elif game_factors[2] is 'drzwi':
             exit()
         os.system('clear')
-
-    while True:
-        x = input('Podaj kod:')
 
 
 if __name__ == '__main__':
