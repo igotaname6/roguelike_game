@@ -54,8 +54,6 @@ def print_board(board):
                 print(color_black + ' ' + color_normal, end='')
             elif board[horizon][vertical] == 'drzwi':
                 print(color_red + ' ' + color_normal, end='')
-            elif board[horizon][vertical] == 'ó':
-                print(color_red + ' ' + color_normal, end='')
             elif board[horizon][vertical] == 'Θ':
                 print(color_character + board[horizon][vertical] + color_normal, end='')
             elif board[horizon][vertical] == '':
@@ -77,6 +75,7 @@ def insert_player(board, x, y):
 def user_command(key_input, x, y, board):
     """reads command from keybords and interact with game"""
     obstacles = ['ź', 'ł', 'ń', 'ż', 'ó']
+    brodcast = None
     if key_input == 'w':  # move avatr upward
         y -= 1
         if board[y][x] in obstacles:
@@ -89,7 +88,7 @@ def user_command(key_input, x, y, board):
         y += 1
         if board[y][x] in obstacles:
             y -= 1
-    elif key_input == 'd':  # move riht
+    elif key_input == 'd':  # move right
         x += 1
         if board[y][x] in obstacles:
             x -= 1
@@ -98,40 +97,64 @@ def user_command(key_input, x, y, board):
     elif key_input == ("e"):  # show inventory
         brodcast = "change"
         return x, y, brodcast
-    brodcast = None
+    if x == 3 and y == 4:
+        brodcast = "drzwi"
     return x, y, brodcast
+
 
 def main():
     '''Intro screen. '''
-    print_board(create_board("intro.csv"))
-    key_input = None
-    while key_input != "x":
+    while True:
+        print_board(create_board("intro.csv"))
         key_input = getch()
-        if key_input == 'p':
+        if key_input == 'a':    # about screen
+            print_board(create_board("about.csv"))
+            key_input = getch()
+            if key_input == "b":
+                pass
+        elif key_input == 'h':    # how-to-play screen
+            print_board(create_board("howtoplay.csv"))
+            key_input = getch()
+            if key_input == "b":
+                pass
+        elif key_input == 'f':    # highscore screen
+            print_board(create_board("highscore.csv"))
+            key_input = getch()
+            if key_input == "b":
+                pass
+        elif key_input == 'x':  # move to game
+            break
+        elif key_input == 'p':
             exit()
+
+    '''Create character screen. '''
     print_board(create_board('character_choose.csv'))
     key_input = None
     while key_input not in ["t", "n", "p"]:
         key_input = getch()
-        #if key_input == 't':    # for terrorist
-            #break
-        #elif key_input == 'n':      # for navy
-            #break
-        if key_input == 'p':
+        if key_input == 't':    # for terrorist
+            broadcast_character_choice = 'terror'
+        elif key_input == 'n':      # for navy
+            broadcast_character_choice = 'navy'
+        elif key_input == 'p':
             exit()
 
     '''First stage. '''
     game_factors = [2, 2]  # list with factors depending on game progress
-    board_change = "board3.csv"
+    board_change = "board1.csv"
     while True:
         interactions_on_board = insert_player(create_board(board_change), game_factors[0], game_factors[1])
         print_board(interactions_on_board)
+        print(game_factors)     # testowo
         key_input = getch()
         game_factors = user_command(key_input, game_factors[0], game_factors[1], interactions_on_board)
+
         if game_factors[2] is None:
-            board_change = "board3.csv"   ### do napsania funkcja zmieniająca plansze.
+            board_change = "board1.csv"   # do napsania funkcja zmieniająca plansze.
         elif game_factors[2] is "change":
             board_change = "menu.csv"
+        elif game_factors[2] is 'drzwi':
+            exit()
         os.system('clear')
 
 
