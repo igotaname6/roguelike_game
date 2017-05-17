@@ -103,6 +103,7 @@ def user_command(key_input, x, y, board):
 
 
 def main():
+    os.system('clear')
     '''Intro screen. '''
     while True:
         print_board(create_board("intro.csv"))
@@ -154,7 +155,31 @@ def main():
         elif game_factors[2] is "change":
             board_change = "menu.csv"
         elif game_factors[2] is 'drzwi':
-            exit()
+            os.system('clear')
+            break
+        os.system('clear')
+
+    question1 = int(input('2 + 2 = '))
+    while question1 != 4:
+        question1 = int(input('2 + 2 = '))
+    os.system('clear')
+
+    '''First stage after first doors. '''
+    game_factors = [3, 5]  # list with factors depending on game progress
+    board_change = "board1.csv"
+    while True:
+        interactions_on_board = insert_player(create_board(board_change), game_factors[0], game_factors[1])
+        print_board(interactions_on_board)
+        print(game_factors)     # testowo
+        key_input = getch()
+        game_factors = user_command(key_input, game_factors[0], game_factors[1], interactions_on_board)
+
+        if game_factors[2] is None:
+            board_change = "board1.csv"   # do napsania funkcja zmieniająca plansze.
+        elif game_factors[2] is "change":
+            board_change = "menu.csv"
+        elif game_factors[2] is 'drzwi':
+            break
         os.system('clear')
 
 
