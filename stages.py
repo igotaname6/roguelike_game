@@ -54,6 +54,8 @@ def print_board(board):
                 print(color_black + ' ' + color_normal, end='')
             elif board[horizon][vertical] == 'drzwi':
                 print(color_red + ' ' + color_normal, end='')
+            elif board[horizon][vertical] == 'ó':
+                print(color_red + ' ' + color_normal, end='')
             elif board[horizon][vertical] == 'Θ':
                 print(color_character + board[horizon][vertical] + color_normal, end='')
             elif board[horizon][vertical] == '':
@@ -120,14 +122,14 @@ def main():
 
     '''First stage. '''
     game_factors = [2, 2]  # list with factors depending on game progress
-    board_change = "board1.csv"
+    board_change = "board3.csv"
     while True:
         interactions_on_board = insert_player(create_board(board_change), game_factors[0], game_factors[1])
         print_board(interactions_on_board)
         key_input = getch()
         game_factors = user_command(key_input, game_factors[0], game_factors[1], interactions_on_board)
         if game_factors[2] is None:
-            board_change = "board1.csv"   ### do napsania funkcja zmieniająca plansze.
+            board_change = "board3.csv"   ### do napsania funkcja zmieniająca plansze.
         elif game_factors[2] is "change":
             board_change = "menu.csv"
         os.system('clear')
