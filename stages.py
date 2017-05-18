@@ -1,4 +1,5 @@
 from inventory_creator import import_inventory
+import operator
 import random
 import os   # for screen clearing
 import datetime  # for time counting
@@ -63,7 +64,6 @@ def print_board(board):
             else:
                 print(board[horizon][vertical], end='')
         print()
-    print('Press P to exit')
 
 
 def insert_player(board, x, y):
@@ -72,11 +72,95 @@ def insert_player(board, x, y):
     return board
 
 
+def add_to_inventory(inventory, added_items):
+    '''Adds to the inventory dictionary a list of items from added_items.'''
+    for i in range(len(added_items)):
+        if added_items[i] in inventory:
+            inventory[added_items[i]] += 1
+        else:
+            inventory[added_items[i]] = 1
+
+
+def print_table(inventory, order=None):
+    '''Takes your inventory and displays it in a well-organized table with
+    each column right-justified. The input argument is an order parameter (string)
+    which works as the following:
+    - None (by default) means the table is unordered
+    - "count,desc" means the table is ordered by count (of items in the inventory)
+      in descending order
+    - "count,asc" means the table is ordered by count in ascending order.'''
+    if order is None:
+        items_number = 0
+        for key in inventory:
+            items_number += inventory[key]
+        max_key_length = max(map(len, inventory))
+        print('Inventory:')
+        print('  count    \b', ' '*(max_key_length-9), '\bitem name')
+        print('-' * (11 + max_key_length))
+        for key in inventory:
+            print(' ' * (6-len(str(inventory[key]))), inventory[key], ' ',
+                  ' ' * (max_key_length - len(key)), key)
+        print('-' * (11 + max_key_length))
+        print('Total number of items:', items_number)
+    else:
+        items_number = 0
+        for key in inventory:
+            items_number += inventory[key]
+        max_key_length = max(map(len, inventory))
+        if order == 'count,desc':
+            type_of_sort = True
+        elif order == 'count,asc':
+            type_of_sort = False
+        inventory_sorted = sorted(inventory.items(), key=operator.itemgetter(1), reverse=type_of_sort)
+        # Sorting(copying) of dict changing it to list of tuples.
+        print('Inventory:')
+        print('  count    \b', ' '*(max_key_length-9), '\bitem name')
+        print('-' * (11 + max_key_length))
+        for i in range(len(inventory_sorted)):
+            print(' ' * (6-len(str(inventory_sorted[i][1]))), inventory_sorted[i][1], ' ',
+                  ' ' * (max_key_length - len(inventory_sorted[i][0])), inventory_sorted[i][0])
+        print('-' * (11 + max_key_length))
+        print('Total number of items:', items_number)
+        print('-' * (11 + max_key_length))
+        print('Press P to exit')
+
+
+def import_inventory(inventory, filename="import_inventory.csv"):
+    '''# Imports new inventory items from a file
+    # The filename comes as an argument, but by default it's
+    # "import_inventory.csv". The import automatically merges items by name.
+    # The file format is plain text with comma separated values (CSV).'''
+    with open(filename, mode='r') as csv_file:
+        reader = csv.reader(csv_file, delimiter=',')
+        for row in reader:
+            for item in row:
+                if item in inventory:
+                    inventory[item] += 1
+                else:
+                    inventory[item] = 1
+    return inventory
+
+
+def export_inventory(inventory, filename="export_inventory.csv"):
+    '''# Exports the inventory into a .csv file.
+    # if the filename argument is None it creates and overwrites a file
+    # called "export_inventory.csv". The file format is the same plain text
+    # with comma separated values (CSV).'''
+    with open('export_inventory.csv', mode='w') as csv_file:
+        write_csv = csv.writer(csv_file, delimiter=',')
+        inventory_list = []
+        for key, value in inventory.items():
+            inventory_list += [key]*value
+        write_csv.writerow(inventory_list)
+
+
 def user_command(key_input, x, y, board):
     """reads command from keybords and interact with game"""
     obstacles = ['ź', 'ł', 'ń', 'ż', 'ó']
-    brodcast = None
-    if key_input == 'w':  # move avatr upward
+    broadcast = None
+    if key_input == 'p':  # exit from game
+        exit()
+    elif key_input == 'w':  # move avatr upward
         y -= 1
         if board[y][x] in obstacles:
             y += 1
@@ -92,14 +176,14 @@ def user_command(key_input, x, y, board):
         x += 1
         if board[y][x] in obstacles:
             x -= 1
-    elif key_input == 'p':  # exit from game
-        exit()
-    elif key_input == ("e"):  # show inventory
-        brodcast = "change"
-        return x, y, brodcast
+    elif key_input == 'e':  # show inventory
+        broadcast = "change"
+        return x, y, broadcast
     if x == 3 and y == 4:
-        brodcast = "drzwi"
-    return x, y, brodcast
+        broadcast = "drzwi1"
+    if x == 20 and y == 29:
+        broadcast = 'budynek1'
+    return x, y, broadcast
 
 
 def main():
@@ -113,20 +197,14 @@ def main():
             os.system('clear')
             print_board(create_board("about.csv"))
             key_input = getch()
-            if key_input == "b":
-                pass
         elif key_input == 'h':    # how-to-play screen
             os.system('clear')
             print_board(create_board("howtoplay.csv"))
             key_input = getch()
-            if key_input == "b":
-                pass
         elif key_input == 'f':    # highscore screen
             os.system('clear')
             print_board(create_board("highscore.csv"))
             key_input = getch()
-            if key_input == "b":
-                pass
         elif key_input == 'x':  # move to game
             break
         elif key_input == 'p':
@@ -147,48 +225,46 @@ def main():
 
     '''First stage. '''
     os.system('clear')
-    game_factors = [2, 2]  # list with factors depending on game progress
+    game_factors = [2, 2]  # starting position # list with factors depending on game progress
     board_change = "board1.csv"
+    state_drzwi1 = 'inside'
+    inventory = {'rope': 1, 'torch': 6, 'gold coin': 42, 'dagger': 1, 'arrow': 12}
+
     while True:
         interactions_on_board = insert_player(create_board(board_change), game_factors[0], game_factors[1])
         print_board(interactions_on_board)
+        print_table(inventory, "count,desc")
+
         print(game_factors)     # testowo
         key_input = getch()
         game_factors = user_command(key_input, game_factors[0], game_factors[1], interactions_on_board)
 
         if game_factors[2] is None:
             board_change = "board1.csv"   # do napsania funkcja zmieniająca plansze.
+
         elif game_factors[2] is "change":
             board_change = "menu.csv"
-        elif game_factors[2] is 'drzwi':
+
+        elif game_factors[2] is 'drzwi1':
             os.system('clear')
-            break
+            question_door1 = input('2 + 2 = ')
+            while question_door1 != '4':
+                question_door1 = input('2 + 2 = ')
+            if state_drzwi1 == 'inside':
+                game_factors = [3, 5]
+                state_drzwi1 = 'outside'
+            else:
+                game_factors = [3, 3]
+                state_drzwi1 = 'inside'
+            os.system('clear')
+
+        elif game_factors[2] is 'budynek1':
+            exit()
+
         os.system('clear')
 
-    os.system('clear')
-    question1 = int(input('2 + 2 = '))
-    while question1 != 4:
-        question1 = int(input('2 + 2 = '))
-    os.system('clear')
+    '''Highscore.'''
 
-    '''First stage after first doors. '''
-    os.system('clear')
-    game_factors = [3, 5]  # list with factors depending on game progress
-    board_change = "board1.csv"
-    while True:
-        interactions_on_board = insert_player(create_board(board_change), game_factors[0], game_factors[1])
-        print_board(interactions_on_board)
-        print(game_factors)     # testowo
-        key_input = getch()
-        game_factors = user_command(key_input, game_factors[0], game_factors[1], interactions_on_board)
-
-        if game_factors[2] is None:
-            board_change = "board1.csv"   # do napsania funkcja zmieniająca plansze.
-        elif game_factors[2] is "change":
-            board_change = "menu.csv"
-        elif game_factors[2] is 'drzwi':
-            break
-        os.system('clear')
 
 if __name__ == '__main__':
     main()
