@@ -3,13 +3,13 @@ import operator
 import random
 import os   # for screen clearing
 import datetime  # for time counting
-import csv
+import csv   #
 import sys   # for getch() function
-import tty
+import tty   #
 import termios
 
 color_black = '\033[3;30;40m'
-color_red = '\033[3;31;41m'   # jak powinny być przechowywane barwy??
+color_red = '\033[3;31;41m'
 color_green = '\033[3;32;42m'
 color_yellow = '\033[3;33;43m'
 color_blue = '\033[3;34;44m'
@@ -18,6 +18,7 @@ color_cyan = '\033[3;36;46m'
 color_white = '\033[3;37;47m'
 color_normal = '\033[1;37;0m'
 color_character = '\033[1;31;47m'
+color_doors = '\033[1;30;41m'
 
 
 def getch():    # WASD moving
@@ -42,27 +43,22 @@ def create_board(filename='board1.csv'):
 
 
 def print_board(board):
-    """prints board on the screen and colouring by characters"""
-    for horizon in range(len(board)):
-        for vertical in range(len(board[horizon])):
-            if board[horizon][vertical] == 'ź':
-                print(color_white + ' ' + color_normal, end='')
-            elif board[horizon][vertical] == 'ł':
-                print(color_green + ' ' + color_normal, end='')
-            elif board[horizon][vertical] == 'ń':
-                print(color_blue + ' ' + color_normal, end='')
-            elif board[horizon][vertical] == 'ż':
-                print(color_black + ' ' + color_normal, end='')
-            elif board[horizon][vertical] == 'drzwi':
-                print(color_red + ' ' + color_normal, end='')
-            elif board[horizon][vertical] == 'Θ':
-                print(color_character + board[horizon][vertical] + color_normal, end='')
-            elif board[horizon][vertical] == '':
-                print(color_yellow + ' ' + color_normal, end='')
-            elif board[horizon][vertical] == '*':
-                print(' ', end='')
+    """Prints board on the screen and colouring by characters"""
+    paint = {'ź': (color_white, ' '),
+             'ł': (color_green, ' '),
+             'ń': (color_blue, ' '),
+             'ż': (color_black, ' '),
+             'drzwi': (color_red, ' '),
+             '': (color_yellow, ' '),
+             'Θ': (color_character, 'Θ'),
+             ' ': (color_normal, ' '),
+             '┼': (color_doors, '┼')}
+    for hor in range(len(board)):
+        for ver in range(len(board[hor])):
+            if board[hor][ver] not in paint:
+                print(board[hor][ver], end='')
             else:
-                print(board[horizon][vertical], end='')
+                print(paint[board[hor][ver]][0] + paint[board[hor][ver]][1] + color_normal, end='')
         print()
 
 
@@ -81,54 +77,33 @@ def add_to_inventory(inventory, added_items):
             inventory[added_items[i]] = 1
 
 
-def print_table(inventory, order=None):
+def print_inventory(inventory):
     '''Takes your inventory and displays it in a well-organized table with
-    each column right-justified. The input argument is an order parameter (string)
-    which works as the following:
-    - None (by default) means the table is unordered
-    - "count,desc" means the table is ordered by count (of items in the inventory)
-      in descending order
-    - "count,asc" means the table is ordered by count in ascending order.'''
-    if order is None:
-        items_number = 0
-        for key in inventory:
-            items_number += inventory[key]
-        max_key_length = max(map(len, inventory))
-        print('Inventory:')
-        print('  count    \b', ' '*(max_key_length-9), '\bitem name')
-        print('-' * (11 + max_key_length))
-        for key in inventory:
-            print(' ' * (6-len(str(inventory[key]))), inventory[key], ' ',
-                  ' ' * (max_key_length - len(key)), key)
-        print('-' * (11 + max_key_length))
-        print('Total number of items:', items_number)
-    else:
-        items_number = 0
-        for key in inventory:
-            items_number += inventory[key]
-        max_key_length = max(map(len, inventory))
-        if order == 'count,desc':
-            type_of_sort = True
-        elif order == 'count,asc':
-            type_of_sort = False
-        inventory_sorted = sorted(inventory.items(), key=operator.itemgetter(1), reverse=type_of_sort)
-        # Sorting(copying) of dict, changing it to list of tuples.
-        print('Inventory:')
-        print('  count    \b', ' '*(max_key_length-9), '\bitem name')
-        print('-' * (11 + max_key_length))
-        for i in range(len(inventory_sorted)):
-            print(' ' * (6-len(str(inventory_sorted[i][1]))), inventory_sorted[i][1], ' ',
-                  ' ' * (max_key_length - len(inventory_sorted[i][0])), inventory_sorted[i][0])
-        print('-' * (11 + max_key_length))
-        print('Total number of items:', items_number)
-        print('-' * (11 + max_key_length))
-        print('Press P to exit')
+    each column right-justified.'''
+    items_number = 0
+    for key in inventory:
+        items_number += inventory[key]
+    max_key_length = max(map(len, inventory))
+    inventory_sorted = sorted(inventory.items(), key=operator.itemgetter(1), reverse=True)
+    # Sorting(copying) of dict, changing it to list of tuples.
+    print('Inventory:')
+    print('  count    \b', ' '*(max_key_length-9), '\bitem name')
+    print('-' * (11 + max_key_length))
+    for i in range(len(inventory_sorted)):
+        print(' ' * (6-len(str(inventory_sorted[i][1]))), inventory_sorted[i][1], ' ',
+              ' ' * (max_key_length - len(inventory_sorted[i][0])), inventory_sorted[i][0])
+    print('-' * (11 + max_key_length))
+    print('Bag weight:', items_number, '\b/20 (bag size)')
+    print('-' * (11 + max_key_length))
+    print('Press P to exit')
+    print('-' * (11 + max_key_length))
 
 
-def user_command(key_input, x, y, board):
+def player_move(key_input, x, y, board):
     """reads command from keybords and interact with game"""
     obstacles = ['ź', 'ł', 'ń', 'ż', 'ó']
     broadcast = None
+    board[y][x] = ''
     if key_input == 'p':  # exit from game
         exit()
     elif key_input == 'w':  # move avatr upward
@@ -150,19 +125,25 @@ def user_command(key_input, x, y, board):
     elif key_input == 'e':  # show inventory
         broadcast = "change"
         return x, y, broadcast
-    if x == 3 and y == 4:
-        broadcast = "drzwi1"
-    if x == 20 and y == 29:
-        broadcast = 'budynek1'
+    if board[y][x] == '┼':
+        broadcast = "doors"
     return x, y, broadcast
 
 
 def main():
     os.system('clear')
-    '''Intro screen. '''
+
+    '''Introduction screen.'''
     while True:
         os.system('clear')
         print_board(create_board("intro.csv"))
+        key_input = getch()
+        break
+
+    '''Menu screen.'''
+    while True:
+        os.system('clear')
+        print_board(create_board("menu.csv"))
         key_input = getch()
         if key_input == 'a':    # about screen
             os.system('clear')
@@ -194,48 +175,68 @@ def main():
         elif key_input == 'p':
             exit()
 
+    questions_list = [['2 + 2 = ', '4'],
+                      ['2 + 2 * 2 = ', '6'],
+                      ['arka gdynia? ', 'kurwa świnia']]
+
     '''First stage. '''
     os.system('clear')
-    game_factors = [2, 2]  # starting position # list with factors depending on game progress
+    player_interactions = [2, 2]  # starting position # list with factors depending on game progress
     board_change = "board1.csv"
-    state_drzwi1 = 'inside'
-    inventory = {'rope': 1, 'torch': 6, 'gold coin': 42, 'dagger': 1, 'arrow': 12}
+    inventory = {'gówna': 1, 'patyki': 6}
+    board = create_board(board_change)
 
     while True:
-        interactions_on_board = insert_player(create_board(board_change), game_factors[0], game_factors[1])
+        interactions_on_board = insert_player(board, player_interactions[0], player_interactions[1])
         print_board(interactions_on_board)
-        print_table(inventory, "count,desc")
+        print_inventory(inventory)
 
-        print(game_factors)     # testowo
+        print(player_interactions)     # testowo
+
         key_input = getch()
-        game_factors = user_command(key_input, game_factors[0], game_factors[1], interactions_on_board)
+        player_interactions = player_move(key_input, player_interactions[0], player_interactions[1], board)
 
-        if game_factors[2] is None:
+        if player_interactions[2] is None:
             board_change = "board1.csv"   # do napsania funkcja zmieniająca plansze.
 
-        elif game_factors[2] is "change":
+        elif player_interactions[2] is "change":
             board_change = "menu.csv"
 
-        elif game_factors[2] is 'drzwi1':
-            # os.system('clear')
-            question_door1 = input('2 + 2 = ')
-            while question_door1 != '4':
-                question_door1 = input('2 + 2 = ')
-            if state_drzwi1 == 'inside':
-                game_factors = [3, 5]
-                state_drzwi1 = 'outside'
-            else:
-                game_factors = [3, 3]
-                state_drzwi1 = 'inside'
+        elif player_interactions[2] is 'doors':
+            questions_no = random.choice(range(len(questions_list)))
+            question = input(questions_list[questions_no][0])
+            while question != questions_list[questions_no][1]:
+                question = input(questions_list[questions_no][0])
             os.system('clear')
 
-        elif game_factors[2] is 'budynek1':
-            exit()
+        elif player_interactions[2] is 'most1':
+            pass
+
+        elif player_interactions[2] is 'budynek1':
+            pass
 
         os.system('clear')
 
-    '''Highscore.'''
+    # '''Win screen.'''
+    # while True:
+    #     os.system('clear')
+    #     print_board(create_board("win.csv"))
+    #     key_input = getch()
+    #     break
+    #
+    # '''Lose screen.'''
+    # while True:
+    #     os.system('clear')
+    #     print_board(create_board("lose.csv"))
+    #     key_input = getch()
+    #     break
 
+    '''Highscore.'''
+    while True:
+        os.system('clear')
+        print_board(create_board("highscore.csv"))
+        key_input = getch()
+        break
 
 if __name__ == '__main__':
     main()

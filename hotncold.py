@@ -9,7 +9,7 @@ print('I am thinking of a 3-digit number. Try to guess what it is.\n\
       I have thought up a number. You have 10 guesses to get it.')
 
 random_digit = str(random.choice(range(100, 1000)))
-print(random_digit)
+# print(random_digit)
 
 tries = 1
 digit_input = input("Guess digit: ")
