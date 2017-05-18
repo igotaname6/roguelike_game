@@ -112,7 +112,7 @@ def print_table(inventory, order=None):
         elif order == 'count,asc':
             type_of_sort = False
         inventory_sorted = sorted(inventory.items(), key=operator.itemgetter(1), reverse=type_of_sort)
-        # Sorting(copying) of dict changing it to list of tuples.
+        # Sorting(copying) of dict, changing it to list of tuples.
         print('Inventory:')
         print('  count    \b', ' '*(max_key_length-9), '\bitem name')
         print('-' * (11 + max_key_length))
@@ -123,35 +123,6 @@ def print_table(inventory, order=None):
         print('Total number of items:', items_number)
         print('-' * (11 + max_key_length))
         print('Press P to exit')
-
-
-def import_inventory(inventory, filename="import_inventory.csv"):
-    '''# Imports new inventory items from a file
-    # The filename comes as an argument, but by default it's
-    # "import_inventory.csv". The import automatically merges items by name.
-    # The file format is plain text with comma separated values (CSV).'''
-    with open(filename, mode='r') as csv_file:
-        reader = csv.reader(csv_file, delimiter=',')
-        for row in reader:
-            for item in row:
-                if item in inventory:
-                    inventory[item] += 1
-                else:
-                    inventory[item] = 1
-    return inventory
-
-
-def export_inventory(inventory, filename="export_inventory.csv"):
-    '''# Exports the inventory into a .csv file.
-    # if the filename argument is None it creates and overwrites a file
-    # called "export_inventory.csv". The file format is the same plain text
-    # with comma separated values (CSV).'''
-    with open('export_inventory.csv', mode='w') as csv_file:
-        write_csv = csv.writer(csv_file, delimiter=',')
-        inventory_list = []
-        for key, value in inventory.items():
-            inventory_list += [key]*value
-        write_csv.writerow(inventory_list)
 
 
 def user_command(key_input, x, y, board):
@@ -246,7 +217,7 @@ def main():
             board_change = "menu.csv"
 
         elif game_factors[2] is 'drzwi1':
-            os.system('clear')
+            # os.system('clear')
             question_door1 = input('2 + 2 = ')
             while question_door1 != '4':
                 question_door1 = input('2 + 2 = ')
