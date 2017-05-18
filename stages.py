@@ -1,4 +1,4 @@
-from inventory_creator import import_inventory
+import hot_cold
 import operator
 import random
 import os   # for screen clearing
@@ -62,7 +62,7 @@ def print_board(board):
         print()
 
 
-def insert_player(board, x, y):
+def insert_player(board, x=0, y=0):
     """inserts avatar on the screen in game board"""
     board[y][x] = ('Θ')
     return board
@@ -78,25 +78,25 @@ def add_to_inventory(inventory, added_items):
 
 
 def print_inventory(inventory):
-    '''Takes your inventory and displays it in a well-organized table with
-    each column right-justified.'''
-    items_number = 0
+    '''Takes your inventory and displays it in a well-organized table with each column right-justified.'''
+    items_weight = 0
     for key in inventory:
-        items_number += inventory[key]
+        items_weight += inventory[key][0] * inventory[key][1]
     max_key_length = max(map(len, inventory))
-    inventory_sorted = sorted(inventory.items(), key=operator.itemgetter(1), reverse=True)
+    inventory_sorted = sorted(inventory.items(), key=operator.itemgetter([1][0]), reverse=True)
     # Sorting(copying) of dict, changing it to list of tuples.
-    print('Inventory:')
-    print('  count    \b', ' '*(max_key_length-9), '\bitem name')
-    print('-' * (11 + max_key_length))
+    print('|' + '-' * (20 + max_key_length) + '|')
+    print('|     INVENTORY:', ' ' * max_key_length, '|')
+    print('|' + '-' * (20 + max_key_length) + '|')
+    print('| count | weight |', ' '*(max_key_length-11), 'item name |')
+    print('|' + '-' * (20 + max_key_length) + '|')
     for i in range(len(inventory_sorted)):
-        print(' ' * (6-len(str(inventory_sorted[i][1]))), inventory_sorted[i][1], ' ',
-              ' ' * (max_key_length - len(inventory_sorted[i][0])), inventory_sorted[i][0])
-    print('-' * (11 + max_key_length))
-    print('Bag weight:', items_number, '\b/20 (bag size)')
-    print('-' * (11 + max_key_length))
-    print('Press P to exit')
-    print('-' * (11 + max_key_length))
+        print('|', ' ' * (4 - len(str(inventory_sorted[i][1][0]))), inventory_sorted[i][1][0],
+              '|', ' ' * (5 - len(str(inventory_sorted[i][1][1]))), inventory_sorted[i][1][1],
+              '|', ' ' * (max_key_length - len(inventory_sorted[i][0])), inventory_sorted[i][0], '|')
+    print('|' + '-' * (20 + max_key_length) + '|')
+    print('|  ', 'Bag weight:', items_weight, '\b/20 kg  |')
+    print('|' + '-' * (20 + max_key_length) + '|')
 
 
 def player_move(key_input, x, y, board):
@@ -177,7 +177,7 @@ def main():
     questions_list = [['2 + 2 = ', '4'],
                       ['2 + 2 * 2 = ', '6'],
                       ['arka gdynia? ', 'kurwa świnia']]
-    inventory = {'gówna': 1, 'patyki': 6}   # poczatkowy inwentarz
+    inventory = {'gówna': (1, 0.5), 'patyki': (6, 0.1)}   # poczatkowy inwentarz
 
     '''First stage. '''
     os.system('clear')
@@ -205,7 +205,6 @@ def main():
     os.system('clear')
     player_interactions = [2, 2]  # starting position
     board_change = "board2.csv"
-    inventory = {'gówna': 1, 'patyki': 6}
     board = create_board(board_change)
     while True:
         interactions_on_board = insert_player(board, player_interactions[0], player_interactions[1])
@@ -271,62 +270,23 @@ def main():
     '''The Boss stage - hotncold game. '''
     os.system('clear')
     board_change = "boss.csv"
+    board = create_board(board_change)
     while True:
-        interactions_on_board = insert_player(board, player_interactions[0], player_interactions[1])
+        interactions_on_board = insert_player(board)
         print_board(interactions_on_board)
         key_input = getch()
         os.system('clear')
 
-        print('I am thinking of a 3-digit number. Try to guess what it is.\n\
-              Here are some clues:\n\
-              When I say:    That means:\n\
-              Cold       No digit is correct.\n\
-              Warm       One digit is correct but in the wrong position.\n\
-              Hot        One digit is correct and in the right position.\n\
-              I have thought up a number. You have 10 guesses to get it.')
-        random_digit = str(random.choice(range(100, 1000)))
-        # print(random_digit)
-        tries = 1
-        digit_input = input("Guess digit: ")
-        while digit_input != random_digit:
-            print('Guess #', tries)
-            if tries == 1:
-                pass
-            else:
-                digit_input = input("Guess digit: ")
-            list_random = [random_digit[0], random_digit[1], random_digit[2]]
-            list_input = [digit_input[0], digit_input[1], digit_input[2]]
-            index_of_hot = []
-            count_hot = 0
-            count_warm = 0
-            count_cold = 0
-            for i in range(len(list_input)):
-                if list_input[i] == list_random[i]:
-                    count_hot += 1
-                    index_of_hot.append(i)
-            list_to_check_warm = [0, 1, 2]
-            for i in range(len(index_of_hot)):
-                list_to_check_warm.remove(index_of_hot[i])
-            for i in list_to_check_warm:
-                if list_input[i] in list_random:
-                    count_warm += 1
-                else:
-                    count_cold += 1
-            if count_cold == 3:
-                print("Cold")
-            else:
-                print("Hot " * count_hot, "Warm " * count_warm)
-            tries += 1
-        print('You got it!')
+        game_end = hot_cold.game()      # return string 'win'
         break
 
-    # '''Win screen.'''
-    # while True:
-    #     os.system('clear')
-    #     print_board(create_board("win.csv"))
-    #     key_input = getch()
-    #     break
-    #
+    '''Win screen.'''
+    while True:
+        os.system('clear')
+        print_board(create_board("win.csv"))
+        key_input = getch()
+        break
+
     # '''Lose screen.'''
     # while True:
     #     os.system('clear')
