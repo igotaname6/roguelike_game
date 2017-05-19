@@ -51,6 +51,7 @@ def set_difficulty():
 
 def game():
     number_to_guess_original = create_number()
+    print(number_to_guess_original)
     n = 1
     start = time.time()
     difficulty = 30

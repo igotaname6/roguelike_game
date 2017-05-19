@@ -13,7 +13,7 @@ color_red = '\033[3;31;41m'
 color_green = '\033[3;32;42m'
 color_yellow = '\033[3;33;43m'
 color_blue = '\033[3;34;44m'
-color_purple = '\033[3;37;45m'
+color_purple = '\033[1;30;43m'
 color_cyan = '\033[3;36;46m'
 color_white = '\033[3;37;47m'
 color_normal = '\033[1;37;0m'
@@ -117,14 +117,14 @@ def print_inventory(inventory):
     print('|' + '-' * (20 + max_key_length) + '|')
     print('|        INVENTORY:', ' ' * max_key_length, '|')
     print('|' + '-' * (20 + max_key_length) + '|')
-    print('| count | weight |item name|')
+    print('| count | weight | item name |')
     print('|' + '-' * (20 + max_key_length) + '|')
     for i in range(len(inventory_sorted)):
         print('|', ' ' * (4 - len(str(inventory_sorted[i][1][0]))), inventory_sorted[i][1][0],
               '|', ' ' * (5 - len(str(inventory_sorted[i][1][1]))), inventory_sorted[i][1][1],
               '|', ' ' * (max_key_length - len(inventory_sorted[i][0])), inventory_sorted[i][0], '|')
     print('|' + '-' * (20 + max_key_length) + '|')
-    print('|', 'Bag weight:', items_weight, '\b/20 kg   |')
+    print('|  ', 'Bag weight:', round(items_weight, 2), '\b/20 kg   |')
     print('|' + '-' * (20 + max_key_length) + '|')
 
 
@@ -142,7 +142,7 @@ def print_highscore(time_start, time_end, player_name, items_collected, board_wi
     '''Highscore'''
     gamedate = datetime.date.today()  # date of game
     player_time = (time_end - time_start).seconds  # how long did player play
-    points = int((int(items_collected) ** 5) / int(player_time)) * 100
+    points = int((int(items_collected) ** 4) / int(player_time)) * 100
     players_score = [make_it_short(i, 13) for i in [player_name, gamedate, items_collected, player_time, points]]
     with open('highscores.txt', 'a') as highscore_add:  # opens and adds result to highscore
         highscore_add.write(" | ".join(players_score) + "\n")
@@ -193,9 +193,9 @@ def player_move(key_input, x, y, board):
     if board[y][x] == '┼':
         broadcast = "doors"
     if board[y][x] == '∞':
-        broadcast = 'shit'
+        broadcast = 'dynamite'
     if board[y][x] == '└':
-        broadcast = 'stick'
+        broadcast = 'ammo'
     if board[y][x] == '$':
         broadcast = 'coins'
     if board[y][x] == '§':
@@ -256,11 +256,10 @@ def main():
     items_collected = 0
     questions_list = [['2 + 2 = ', '4'],
                       ['2 + 2 * 2 = ', '6'],
-                      ['Arka Gdynia? ', 'kurwa świnia'],
-                      ['Korona Kielce? ', 'kurwa widelce'],
                       ['"Sneaky" programming language? ', 'python'],
-                      ['Code to unlock Codecools doors? ', '1347']]
-    inventory = {'shit': [1, 0.5], 'stick': [1, 0.1]}   # poczatkowy inwentarz
+                      ['Code to unlock Codecools doors? ', '1347'],
+                      ['2 ^ 3 = ', '8']]
+    inventory = {'dynamite': [1, 0.5], 'ammo': [1, 0.1], 'coin': [1, 0.05]}   # poczatkowy inwentarz
 
     '''First stage. '''
     os.system('clear')
@@ -274,6 +273,7 @@ def main():
     player_name = input('Enter your name: ')
 
     while True:
+        '''First stage.'''
         os.system('clear')
         interactions_on_board = insert_player(board, player_interactions[0], player_interactions[1])
         print_board(interactions_on_board)
@@ -287,12 +287,12 @@ def main():
             question = input(questions_list[questions_no][0])
             while question != questions_list[questions_no][1]:
                 question = input(questions_list[questions_no][0])
-        elif player_interactions[2] is 'shit':
-            dragon_loot = ['shit', 1, 0.5]
+        elif player_interactions[2] is 'dynamite':
+            dragon_loot = ['dynamite', 1, 0.5]
             add_to_inventory(inventory, dragon_loot)
             items_collected += 1
-        elif player_interactions[2] is 'stick':
-            dragon_loot = ['stick', 1, 0.1]
+        elif player_interactions[2] is 'ammo':
+            dragon_loot = ['ammo', 1, 0.1]
             add_to_inventory(inventory, dragon_loot)
             items_collected += 1
         elif player_interactions[2] is 'coins':
@@ -311,112 +311,131 @@ def main():
             break
         os.system('clear')
 
-    # '''Second stage. '''
-    # os.system('clear')
-    # player_interactions = [93, 29]  # starting position
-    # board_change = "board2.csv"
-    # board = create_board(board_change)
-    # while True:
-    #     interactions_on_board = insert_player(board, player_interactions[0], player_interactions[1])
-    #     print_board(interactions_on_board)
-    #     print_inventory(inventory)
-    #     print(player_interactions)     # testowo
-    #     key_input = getch()
-    #     player_interactions = player_move(key_input, player_interactions[0], player_interactions[1], board)
-    #
-    #     if player_interactions[2] is 'doors':
-    #         questions_no = random.choice(range(len(questions_list)))
-    #         question = input(questions_list[questions_no][0])
-    #         while question != questions_list[questions_no][1]:
-    #             question = input(questions_list[questions_no][0])
-    #
-    #     elif player_interactions[2] is 'next_lvl':
-    #         break
-    #     os.system('clear')
-    #
-    # '''Third stage. '''
-    # os.system('clear')
-    # player_interactions = [2, 2]  # starting position
-    # board_change = "board3.csv"
-    # board = create_board(board_change)
-    # while True:
-    #     interactions_on_board = insert_player(board, player_interactions[0], player_interactions[1])
-    #     print_board(interactions_on_board)
-    #     print_inventory(inventory)
-    #     print(player_interactions)     # testowo
-    #     key_input = getch()
-    #     player_interactions = player_move(key_input, player_interactions[0], player_interactions[1], board)
-    #
-    #     if player_interactions[2] is 'doors':
-    #         questions_no = random.choice(range(len(questions_list)))
-    #         question = input(questions_list[questions_no][0])
-    #         while question != questions_list[questions_no][1]:
-    #             question = input(questions_list[questions_no][0])
-    #     elif player_interactions[2] is 'shit':
-    #         dragon_loot = ['shit', 1, 0.5]
-    #         add_to_inventory(inventory, dragon_loot)
-    #         items_collected += 1
-    #     elif player_interactions[2] is 'stick':
-    #         dragon_loot = ['stick', 1, 0.1]
-    #         add_to_inventory(inventory, dragon_loot)
-    #         items_collected += 1
-    #     elif player_interactions[2] is 'coins':
-    #         dragon_loot = ['coin', 1, 0.05]
-    #         add_to_inventory(inventory, dragon_loot)
-    #         items_collected += 1
-    #     elif player_interactions[2] is 'rope':
-    #         dragon_loot = ['rope', 1, 2]
-    #         add_to_inventory(inventory, dragon_loot)
-    #         items_collected += 1
-    #     elif player_interactions[2] is 'pistol':
-    #         dragon_loot = ['pistol', 1, 1]
-    #         add_to_inventory(inventory, dragon_loot)
-    #         items_collected += 1
-    #     elif player_interactions[2] is 'next_lvl':
-    #         break
-    #     os.system('clear')
-    #
-    # '''Fourth stage. '''
-    # os.system('clear')
-    # player_interactions = [2, 2]  # starting position
-    # board_change = "board4.csv"
-    # board = create_board(board_change)
-    # while True:
-    #     interactions_on_board = insert_player(board, player_interactions[0], player_interactions[1])
-    #     print_board(interactions_on_board)
-    #     print_inventory(inventory)
-    #     print(player_interactions)     # testowo
-    #     key_input = getch()
-    #     player_interactions = player_move(key_input, player_interactions[0], player_interactions[1], board)
-    #
-    #     if player_interactions[2] is 'doors':
-    #         questions_no = random.choice(range(len(questions_list)))
-    #         question = input(questions_list[questions_no][0])
-    #         while question != questions_list[questions_no][1]:
-    #             question = input(questions_list[questions_no][0])
-    #     elif player_interactions[2] is 'shit':
-    #         dragon_loot = ['shit', 1, 0.5]
-    #         add_to_inventory(inventory, dragon_loot)
-    #         items_collected += 1
-    #     elif player_interactions[2] is 'stick':
-    #         dragon_loot = ['stick', 1, 0.1]
-    #         add_to_inventory(inventory, dragon_loot)
-    #         items_collected += 1
-    #     elif player_interactions[2] is 'coins':
-    #         dragon_loot = ['coin', 1, 0.05]
-    #         add_to_inventory(inventory, dragon_loot)
-    #         items_collected += 1
-    #     elif player_interactions[2] is 'rope':
-    #         dragon_loot = ['rope', 1, 2]
-    #         add_to_inventory(inventory, dragon_loot)
-    #         items_collected += 1
-    #     elif player_interactions[2] is 'pistol':
-    #         dragon_loot = ['pistol', 1, 1]
-    #         add_to_inventory(inventory, dragon_loot)
-    #         items_collected += 1
-    #     elif player_interactions[2] is 'next_lvl':
-    #         break
-    #     os.system('clear')
+    '''Second stage. '''
+    os.system('clear')
+    player_interactions = [93, 29]  # starting position
+    board_change = "board2.csv"
+    board = create_board(board_change)
+    while True:
+        interactions_on_board = insert_player(board, player_interactions[0], player_interactions[1])
+        print_board(interactions_on_board)
+        print_inventory(inventory)
+        print(player_interactions)     # testowo
+        key_input = getch()
+        player_interactions = player_move(key_input, player_interactions[0], player_interactions[1], board)
+
+        if player_interactions[2] is 'doors':
+            questions_no = random.choice(range(len(questions_list)))
+            question = input(questions_list[questions_no][0])
+            while question != questions_list[questions_no][1]:
+                question = input(questions_list[questions_no][0])
+        elif player_interactions[2] is 'dynamite':
+            dragon_loot = ['dynamite', 1, 0.5]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'ammo':
+            dragon_loot = ['ammo', 1, 0.1]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'coins':
+            dragon_loot = ['coin', 1, 0.05]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'rope':
+            dragon_loot = ['rope', 1, 2]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'pistol':
+            dragon_loot = ['pistol', 1, 1]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'next_lvl':
+            break
+        os.system('clear')
+
+    '''Third stage. '''
+    os.system('clear')
+    player_interactions = [2, 2]  # starting position
+    board_change = "board3.csv"
+    board = create_board(board_change)
+    while True:
+        interactions_on_board = insert_player(board, player_interactions[0], player_interactions[1])
+        print_board(interactions_on_board)
+        print_inventory(inventory)
+        print(player_interactions)     # testowo
+        key_input = getch()
+        player_interactions = player_move(key_input, player_interactions[0], player_interactions[1], board)
+
+        if player_interactions[2] is 'doors':
+            questions_no = random.choice(range(len(questions_list)))
+            question = input(questions_list[questions_no][0])
+            while question != questions_list[questions_no][1]:
+                question = input(questions_list[questions_no][0])
+        elif player_interactions[2] is 'dynamite':
+            dragon_loot = ['dynamite', 1, 0.5]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'ammo':
+            dragon_loot = ['ammo', 1, 0.1]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'coins':
+            dragon_loot = ['coin', 1, 0.05]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'rope':
+            dragon_loot = ['rope', 1, 2]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'pistol':
+            dragon_loot = ['pistol', 1, 1]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'next_lvl':
+            break
+        os.system('clear')
+
+    '''Fourth stage. '''
+    os.system('clear')
+    player_interactions = [2, 2]  # starting position
+    board_change = "board4.csv"
+    board = create_board(board_change)
+    while True:
+        interactions_on_board = insert_player(board, player_interactions[0], player_interactions[1])
+        print_board(interactions_on_board)
+        print_inventory(inventory)
+        print(player_interactions)     # testowo
+        key_input = getch()
+        player_interactions = player_move(key_input, player_interactions[0], player_interactions[1], board)
+
+        if player_interactions[2] is 'doors':
+            questions_no = random.choice(range(len(questions_list)))
+            question = input(questions_list[questions_no][0])
+            while question != questions_list[questions_no][1]:
+                question = input(questions_list[questions_no][0])
+        elif player_interactions[2] is 'dynamite':
+            dragon_loot = ['dynamite', 1, 0.5]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'ammo':
+            dragon_loot = ['ammo', 1, 0.1]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'coins':
+            dragon_loot = ['coin', 1, 0.05]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'rope':
+            dragon_loot = ['rope', 1, 2]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'pistol':
+            dragon_loot = ['pistol', 1, 1]
+            add_to_inventory(inventory, dragon_loot)
+            items_collected += 1
+        elif player_interactions[2] is 'next_lvl':
+            break
+        os.system('clear')
 
     '''The Boss stage - hotncold game. '''
     os.system('clear')
