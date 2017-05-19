@@ -13,7 +13,7 @@ color_red = '\033[3;31;41m'
 color_green = '\033[3;32;42m'
 color_yellow = '\033[3;33;43m'
 color_blue = '\033[3;34;44m'
-color_purple = '\033[3;35;45m'
+color_purple = '\033[3;37;45m'
 color_cyan = '\033[3;36;46m'
 color_white = '\033[3;37;47m'
 color_normal = '\033[1;37;0m'
@@ -39,6 +39,31 @@ def create_board(filename='board1.csv'):
         board = []
         for row in reader:
             board.append(row)
+    for i in range(15):
+        x = random.choice(range(0, 30))
+        y = random.choice(range(0, 100))
+        if board[x][y] == '':
+            board[x][y] = '∞'
+    for i in range(15):
+        x = random.choice(range(0, 30))
+        y = random.choice(range(0, 100))
+        if board[x][y] == '':
+            board[x][y] = '└'
+    for i in range(15):
+        x = random.choice(range(0, 30))
+        y = random.choice(range(0, 100))
+        if board[x][y] == '':
+            board[x][y] = '$'
+    for i in range(5):
+        x = random.choice(range(0, 30))
+        y = random.choice(range(0, 100))
+        if board[x][y] == '':
+            board[x][y] = '§'
+    for i in range(5):
+        x = random.choice(range(0, 30))
+        y = random.choice(range(0, 100))
+        if board[x][y] == '':
+            board[x][y] = '/'
     return board    # return nested list [y][x]
 
 
@@ -48,11 +73,16 @@ def print_board(board):
              'ł': (color_green, ' '),
              'ń': (color_blue, ' '),
              'ż': (color_black, ' '),
-             'drzwi': (color_red, ' '),
              '': (color_yellow, ' '),
              'Θ': (color_character, 'Θ'),
              ' ': (color_normal, ' '),
-             '┼': (color_doors, '┼')}
+             'ó': (color_red, ' '),
+             '┼': (color_doors, '┼'),
+             '∞': (color_purple, '∞'),
+             '└': (color_purple, '└'),
+             '$': (color_purple, '$'),
+             '§': (color_purple, '§'),
+             '/': (color_purple, '/')}
     for hor in range(len(board)):
         for ver in range(len(board[hor])):
             if board[hor][ver] not in paint:
@@ -70,11 +100,10 @@ def insert_player(board, x=0, y=0):
 
 def add_to_inventory(inventory, added_items):
     '''Adds to the inventory dictionary a list of items from added_items.'''
-    for i in range(len(added_items)):
-        if added_items[i] in inventory:
-            inventory[added_items[i]] += 1
-        else:
-            inventory[added_items[i]] = 1
+    if added_items[0] in inventory:
+        inventory[added_items[0]][0] += 1
+    else:
+        inventory[added_items[0]] = [added_items[1], added_items[2]]
 
 
 def print_inventory(inventory):
@@ -86,16 +115,16 @@ def print_inventory(inventory):
     inventory_sorted = sorted(inventory.items(), key=operator.itemgetter([1][0]), reverse=True)
     # Sorting(copying) of dict, changing it to list of tuples.
     print('|' + '-' * (20 + max_key_length) + '|')
-    print('|     INVENTORY:', ' ' * max_key_length, '|')
+    print('|        INVENTORY:', ' ' * max_key_length, '|')
     print('|' + '-' * (20 + max_key_length) + '|')
-    print('| count | weight |', ' '*(max_key_length-11), 'item name |')
+    print('| count | weight |item name|')
     print('|' + '-' * (20 + max_key_length) + '|')
     for i in range(len(inventory_sorted)):
         print('|', ' ' * (4 - len(str(inventory_sorted[i][1][0]))), inventory_sorted[i][1][0],
               '|', ' ' * (5 - len(str(inventory_sorted[i][1][1]))), inventory_sorted[i][1][1],
               '|', ' ' * (max_key_length - len(inventory_sorted[i][0])), inventory_sorted[i][0], '|')
     print('|' + '-' * (20 + max_key_length) + '|')
-    print('|  ', 'Bag weight:', items_weight, '\b/20 kg  |')
+    print('|', 'Bag weight:', items_weight, '\b/20 kg  |')
     print('|' + '-' * (20 + max_key_length) + '|')
 
 
@@ -124,6 +153,16 @@ def player_move(key_input, x, y, board):
             x -= 1
     if board[y][x] == '┼':
         broadcast = "doors"
+    if board[y][x] == '∞':
+        broadcast = 'shit'
+    if board[y][x] == '└':
+        broadcast = 'stick'
+    if board[y][x] == '$':
+        broadcast = 'coins'
+    if board[y][x] == '§':
+        broadcast = 'rope'
+    if board[y][x] == '/':
+        broadcast = 'pistol'
     if [x, y] == [94, 31]:
         broadcast = 'next_lvl'
     return x, y, broadcast
@@ -176,8 +215,11 @@ def main():
 
     questions_list = [['2 + 2 = ', '4'],
                       ['2 + 2 * 2 = ', '6'],
-                      ['arka gdynia? ', 'kurwa świnia']]
-    inventory = {'gówna': (1, 0.5), 'patyki': (6, 0.1)}   # poczatkowy inwentarz
+                      ['arka gdynia? ', 'kurwa świnia'],
+                      ['korona kielce? ', 'kurwa wisielce'],
+                      ['"sneaky" programming language? ', 'python'],
+                      ['code to unlock Codecools doors? ', '1347']]
+    inventory = {'shit': [1, 0.5], 'stick': [1, 0.1]}   # poczatkowy inwentarz
 
     '''First stage. '''
     os.system('clear')
@@ -197,13 +239,28 @@ def main():
             question = input(questions_list[questions_no][0])
             while question != questions_list[questions_no][1]:
                 question = input(questions_list[questions_no][0])
+        elif player_interactions[2] is 'shit':
+            dragon_loot = ['shit', 1, 0.5]
+            add_to_inventory(inventory, dragon_loot)
+        elif player_interactions[2] is 'stick':
+            dragon_loot = ['stick', 1, 0.1]
+            add_to_inventory(inventory, dragon_loot)
+        elif player_interactions[2] is 'coins':
+            dragon_loot = ['coin', 1, 0.05]
+            add_to_inventory(inventory, dragon_loot)
+        elif player_interactions[2] is 'rope':
+            dragon_loot = ['rope', 1, 2]
+            add_to_inventory(inventory, dragon_loot)
+        elif player_interactions[2] is 'pistol':
+            dragon_loot = ['pistol', 1, 1]
+            add_to_inventory(inventory, dragon_loot)
         elif player_interactions[2] is 'next_lvl':
             break
         os.system('clear')
 
     '''Second stage. '''
     os.system('clear')
-    player_interactions = [2, 2]  # starting position
+    player_interactions = [93, 29]  # starting position
     board_change = "board2.csv"
     board = create_board(board_change)
     while True:
@@ -219,6 +276,7 @@ def main():
             question = input(questions_list[questions_no][0])
             while question != questions_list[questions_no][1]:
                 question = input(questions_list[questions_no][0])
+
         elif player_interactions[2] is 'next_lvl':
             break
         os.system('clear')
@@ -241,6 +299,21 @@ def main():
             question = input(questions_list[questions_no][0])
             while question != questions_list[questions_no][1]:
                 question = input(questions_list[questions_no][0])
+        elif player_interactions[2] is 'shit':
+            dragon_loot = ['shit', 1, 0.5]
+            add_to_inventory(inventory, dragon_loot)
+        elif player_interactions[2] is 'stick':
+            dragon_loot = ['stick', 1, 0.1]
+            add_to_inventory(inventory, dragon_loot)
+        elif player_interactions[2] is 'coins':
+            dragon_loot = ['coin', 1, 0.05]
+            add_to_inventory(inventory, dragon_loot)
+        elif player_interactions[2] is 'rope':
+            dragon_loot = ['rope', 1, 2]
+            add_to_inventory(inventory, dragon_loot)
+        elif player_interactions[2] is 'pistol':
+            dragon_loot = ['pistol', 1, 1]
+            add_to_inventory(inventory, dragon_loot)
         elif player_interactions[2] is 'next_lvl':
             break
         os.system('clear')
@@ -263,6 +336,21 @@ def main():
             question = input(questions_list[questions_no][0])
             while question != questions_list[questions_no][1]:
                 question = input(questions_list[questions_no][0])
+        elif player_interactions[2] is 'shit':
+            dragon_loot = ['shit', 1, 0.5]
+            add_to_inventory(inventory, dragon_loot)
+        elif player_interactions[2] is 'stick':
+            dragon_loot = ['stick', 1, 0.1]
+            add_to_inventory(inventory, dragon_loot)
+        elif player_interactions[2] is 'coins':
+            dragon_loot = ['coin', 1, 0.05]
+            add_to_inventory(inventory, dragon_loot)
+        elif player_interactions[2] is 'rope':
+            dragon_loot = ['rope', 1, 2]
+            add_to_inventory(inventory, dragon_loot)
+        elif player_interactions[2] is 'pistol':
+            dragon_loot = ['pistol', 1, 1]
+            add_to_inventory(inventory, dragon_loot)
         elif player_interactions[2] is 'next_lvl':
             break
         os.system('clear')
