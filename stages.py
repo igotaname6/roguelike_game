@@ -257,7 +257,6 @@ def main():
     questions_list = [['2 + 2 = ', '4'],
                       ['2 + 2 * 2 = ', '6'],
                       ['"Sneaky" programming language? ', 'python'],
-                      ['Code to unlock Codecools doors? ', '1347'],
                       ['2 ^ 3 = ', '8']]
     inventory = {'dynamite': [1, 0.5], 'ammo': [1, 0.1], 'coin': [1, 0.05]}   # poczatkowy inwentarz
 
