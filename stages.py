@@ -215,10 +215,10 @@ def main():
 
     questions_list = [['2 + 2 = ', '4'],
                       ['2 + 2 * 2 = ', '6'],
-                      ['arka gdynia? ', 'kurwa świnia'],
-                      ['korona kielce? ', 'kurwa wisielce'],
-                      ['"sneaky" programming language? ', 'python'],
-                      ['code to unlock Codecools doors? ', '1347']]
+                      ['Arka Gdynia? ', 'kurwa świnia'],
+                      ['Korona Kielce? ', 'kurwa wisielce'],
+                      ['"Sneaky" programming language? ', 'python'],
+                      ['Code to unlock Codecools doors? ', '1347']]
     inventory = {'shit': [1, 0.5], 'stick': [1, 0.1]}   # poczatkowy inwentarz
 
     '''First stage. '''
@@ -359,6 +359,7 @@ def main():
     os.system('clear')
     board_change = "boss.csv"
     board = create_board(board_change)
+    key_input = getch()
     while True:
         interactions_on_board = insert_player(board)
         print_board(interactions_on_board)
